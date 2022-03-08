@@ -66,9 +66,8 @@ public final class StringList {
         } else if (s.compareTo(head.s) < 0) {
             nodeToAdd.next = head;
             head = nodeToAdd;
-        } else if (s.compareTo(head.s) == 0) {
-            // do nothing - repeat entry;
-        } else {
+            // check String at head is not the same as the one we are adding
+        } else if (s.compareTo(head.s) != 0) {
             StringNode current = head;
             StringNode prev = head;
             while (s.compareTo(current.s) > 0) {
@@ -81,7 +80,7 @@ public final class StringList {
                     current = current.next;
                 }
             }
-            // add String in the middle of the list
+            // add String in the middle of the list - check not duplicate
             if (current.s.compareTo(s) != 0) {
                 prev.next = nodeToAdd;
                 nodeToAdd.next = current;
