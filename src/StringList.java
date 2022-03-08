@@ -34,12 +34,22 @@ public final class StringList {
         stringList.printAll();
         System.out.println("---------");
 
+        stringList.add("egg");
+        System.out.println(stringList.size());
+        stringList.printAll();
+        System.out.println("---------");
+
         stringList.add("apple");
         System.out.println(stringList.size());
         stringList.printAll();
         System.out.println("---------");
 
         stringList.add("robot");
+        System.out.println(stringList.size());
+        stringList.printAll();
+        System.out.println("---------");
+
+        stringList.add("fridge");
         System.out.println(stringList.size());
         stringList.printAll();
         System.out.println("---------");
@@ -56,6 +66,8 @@ public final class StringList {
         } else if (s.compareTo(head.s) < 0) {
             nodeToAdd.next = head;
             head = nodeToAdd;
+        } else if (s.compareTo(head.s) == 0) {
+            // do nothing - repeat entry;
         } else {
             StringNode current = head;
             StringNode prev = head;
@@ -70,8 +82,10 @@ public final class StringList {
                 }
             }
             // add String in the middle of the list
-            prev.next = nodeToAdd;
-            nodeToAdd.next = current;
+            if (current.s.compareTo(s) != 0) {
+                prev.next = nodeToAdd;
+                nodeToAdd.next = current;
+            }
         }
     }
 
