@@ -8,8 +8,16 @@ public final class Coordinate2D {
         this.y = y;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     /** Returns the euler distance. */
-    private double magnitude() {
+    public double magnitude() {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 

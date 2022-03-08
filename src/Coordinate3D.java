@@ -9,8 +9,20 @@ public final class Coordinate3D {
         this.z = z;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
     /** Returns the euler distance. */
-    private double magnitude() {
+    public double magnitude() {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
     }
 
