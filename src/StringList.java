@@ -5,58 +5,58 @@ public final class StringList {
     public static void main(String[] args) {
         StringList stringList = new StringList();
 
-        stringList.add("hello");
-        System.out.println(stringList.contains("hello"));
-        System.out.println(stringList.contains("egg"));
-        System.out.println(stringList.contains("zebra"));
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
-
-        stringList.add("egg");
-        System.out.println(stringList.contains("hello"));
-        System.out.println(stringList.contains("egg"));
-        System.out.println(stringList.contains("zebra"));
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
-
-        stringList.add("zebra");
-        System.out.println(stringList.contains("hello"));
-        System.out.println(stringList.contains("egg"));
-        System.out.println(stringList.contains("zebra"));
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
-
-        stringList.add("fridge");
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
-
-        stringList.add("egg");
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
-
-        stringList.add("apple");
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
-
-        stringList.add("robot");
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
-
-        stringList.add("fridge");
-        System.out.println(stringList.size());
-        stringList.printAll();
-        System.out.println("---------");
+//        stringList.add("hello");
+//        System.out.println(stringList.contains("hello"));
+//        System.out.println(stringList.contains("egg"));
+//        System.out.println(stringList.contains("zebra"));
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
+//
+//        stringList.add("egg");
+//        System.out.println(stringList.contains("hello"));
+//        System.out.println(stringList.contains("egg"));
+//        System.out.println(stringList.contains("zebra"));
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
+//
+//        stringList.add("zebra");
+//        System.out.println(stringList.contains("hello"));
+//        System.out.println(stringList.contains("egg"));
+//        System.out.println(stringList.contains("zebra"));
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
+//
+//        stringList.add("fridge");
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
+//
+//        stringList.add("egg");
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
+//
+//        stringList.add("apple");
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
+//
+//        stringList.add("robot");
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
+//
+//        stringList.add("fridge");
+//        System.out.println(stringList.size());
+//        stringList.printAll();
+//        System.out.println("---------");
 
     }
 
-    private StringNode head = null;
+    StringNode head = null;
 
     public void add(String s) {
         StringNode nodeToAdd = new StringNode(s);
@@ -158,12 +158,20 @@ public final class StringList {
         return sb.toString();
     }
 
-    private final class StringNode {
+    final class StringNode {
         private final String s;
         private StringNode next;
 
         StringNode(String s) {
             this.s = s;
+        }
+
+        public String getS() {
+            return s;
+        }
+
+        public StringNode getNext() {
+            return next;
         }
     }
 }
