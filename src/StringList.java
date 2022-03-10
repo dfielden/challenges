@@ -1,62 +1,10 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public final class StringList {
 
-    public static void main(String[] args) {
-        StringList stringList = new StringList();
-
-//        stringList.add("hello");
-//        System.out.println(stringList.contains("hello"));
-//        System.out.println(stringList.contains("egg"));
-//        System.out.println(stringList.contains("zebra"));
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-//
-//        stringList.add("egg");
-//        System.out.println(stringList.contains("hello"));
-//        System.out.println(stringList.contains("egg"));
-//        System.out.println(stringList.contains("zebra"));
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-//
-//        stringList.add("zebra");
-//        System.out.println(stringList.contains("hello"));
-//        System.out.println(stringList.contains("egg"));
-//        System.out.println(stringList.contains("zebra"));
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-//
-//        stringList.add("fridge");
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-//
-//        stringList.add("egg");
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-//
-//        stringList.add("apple");
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-//
-//        stringList.add("robot");
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-//
-//        stringList.add("fridge");
-//        System.out.println(stringList.size());
-//        stringList.printAll();
-//        System.out.println("---------");
-
-    }
-
-    StringNode head = null;
+    private StringNode head = null;
 
     public void add(String s) {
         StringNode nodeToAdd = new StringNode(s);
@@ -122,7 +70,7 @@ public final class StringList {
         return count;
     }
 
-    Iterator<String> iterator() {
+    Iterator<String> iterator() {   // Add test
         return new Iterator<String>() {
             StringNode current = head;
             @Override
@@ -142,17 +90,28 @@ public final class StringList {
         };
     }
 
+    public ArrayList<String> toArrayList() {
+        ArrayList<String> list = new ArrayList<>();
+        Iterator<String> it = iterator();
+        while (it.hasNext()) {
+            list.add(it.next());
+        }
+        return list;
+    }
+
     @Override
     public String toString() {
         if (head == null) {
             return "[]";
         }
+
         StringBuilder sb = new StringBuilder();
         StringNode current = head;
-        sb.append(current.s);
-        while (current.next != null) {
-            sb.append(" --> ");
-            sb.append(current.next.s);
+        while (current != null) {
+            sb.append(current.s);
+            if (current.next != null) {
+                sb.append(" --> ");
+            }
             current = current.next;
         }
         return sb.toString();

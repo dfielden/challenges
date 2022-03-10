@@ -1,4 +1,3 @@
-
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,21 +17,21 @@ public class StringListTest {
     @Test
     public void addInOrder() throws Exception {
         ArrayList<String> words = listOfWords();
-        addListOfWords(words);
+        addAndCheck(words);
     }
 
     @Test
     public void addInReverse() throws Exception {
         ArrayList<String> words = listOfWords();
         Collections.reverse(words);
-        addListOfWords(words);
+        addAndCheck(words);
     }
 
     @Test
     public void addInRandomOrder() throws Exception {
         ArrayList<String> words = listOfWords();
         Collections.shuffle(words);
-        addListOfWords(words);
+        addAndCheck(words);
     }
 
     @Test
@@ -49,17 +48,17 @@ public class StringListTest {
         for (String word : words) {
             list.add(word);
             assertEquals(listSize, list.size());
-            checkStringListOrder(list.head);
+            assertInOrder(list.toArrayList());
         }
     }
 
-    private void addListOfWords(ArrayList<String> words) throws Exception {
+    private static void addAndCheck(ArrayList<String> words) throws Exception {
         StringList list = new StringList();
 
         for (int i = 0; i < words.size(); i++) {
             list.add(words.get(i));
             assertEquals(i + 1, list.size());
-            checkStringListOrder(list.head);
+            assertInOrder(list.toArrayList());
 
             for (int j = 0; j < words.size(); j++) {
                 if (j <= i) {
@@ -71,10 +70,10 @@ public class StringListTest {
         }
     }
 
-    private void checkStringListOrder(StringList.StringNode head) throws Exception {
-        while (head.getNext() != null) {
-            assertTrue(head.getS().compareTo(head.getNext().getS()) < 0);
-            head = head.getNext();
+    private static void assertInOrder(ArrayList<String> list) throws Exception {
+        for (int i = 0; i < list.size() - 1; i++) {
+            assertTrue(list.get(i).compareTo(list.get(i+1)) < 0);
+
         }
     }
 
@@ -83,11 +82,11 @@ public class StringListTest {
         list.add("apple");
         list.add("banana");
         list.add("cat");
-        list.add("dog");
+        list.add("dany");
         list.add("elephant");
         list.add("frog");
-        list.add("goat");
-        list.add("hippo");
+        list.add("gubby");
+        list.add("happyface");
         list.add("iguana");
         list.add("joke");
         list.add("king");
@@ -99,7 +98,7 @@ public class StringListTest {
         list.add("queen");
         list.add("robot");
         list.add("street");
-        list.add("town");
+        list.add("tally");
         list.add("umbrella");
         list.add("very");
         list.add("worm");
