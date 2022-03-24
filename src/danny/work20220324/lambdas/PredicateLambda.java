@@ -1,5 +1,7 @@
 package danny.work20220324.lambdas;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class PredicateLambda {
@@ -14,11 +16,31 @@ public class PredicateLambda {
         System.out.printf("13 divisible by 3: %s%n", divisibleByThree.test(13));
         System.out.printf("13 divisible by 5: %s%n", divisibleByFive.test(13));
         System.out.println();
-        
+
         System.out.printf("30 divisible by 2: %s%n", divisibleByTwo.test(30));
         System.out.printf("30 divisible by 3: %s%n", divisibleByThree.test(30));
         System.out.printf("30 divisible by 5: %s%n", divisibleByFive.test(30));
 
+        List<String> inputs = new ArrayList<>();
+        inputs.add("gubbyworm");
+        inputs.add("dogubby");
+        inputs.add("hf");
+        inputs.add("dannyworm");
+        inputs.add("tally");
+        inputs.add("worm");
+
+        List<String> filtered = filter(inputs, s -> s.contains("worm"));
+        System.out.println("filtered = " + filtered);
+    }
+
+    static List<String> filter(List<String> input, Predicate<String> predicate) {
+        List<String> result = new ArrayList<>();
+        for (String s : input) {
+            if (predicate.test(s)) {
+                result.add(s);
+            }
+        }
+        return result;
     }
 
     // regular class
