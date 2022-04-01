@@ -6,13 +6,12 @@ import java.util.List;
 import java.util.function.Function;
 
 public class TransformingIterable<T> implements Iterable<T> {
-    private Iterable<T> iterable;
+    private final Iterable<T> iterable;
     private final Function<T, T> function;
 
     public TransformingIterable(Iterable<T> iterable, Function<T, T> function) {
         this.iterable = iterable;
         this.function = function;
-
     }
 
     public Iterable<T> getIterable() {
