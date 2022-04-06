@@ -11,11 +11,15 @@ public final class Spreadsheet {
         spreadsheet.set(2, "A", "=10 + A1"); // 15
         spreadsheet.set(3, "A", "=50"); // 50
         spreadsheet.set(4, "A", "=A3 + A2"); // 65
+        spreadsheet.set(5, "A", "=A4 + A1"); // 70
 
         System.out.println(spreadsheet.getComputed(1, "A"));
         System.out.println(spreadsheet.getComputed(2, "A"));
         System.out.println(spreadsheet.getComputed(3, "A"));
         System.out.println(spreadsheet.getComputed(4, "A"));
+        System.out.println(spreadsheet.getComputed(5, "A"));
+        System.out.println(spreadsheet.getComputed(6, "A"));
+
     }
 
     private final Map<Integer, Map<String, String>> rows = new HashMap<>();
@@ -46,6 +50,9 @@ public final class Spreadsheet {
 
     public String getComputed(int row, String column) {
         String rawValue = getRaw(row, column);
+        if (rawValue.length() == 0) {
+            return "";
+        }
         if (rawValue.charAt(0) == '=') {
             // Needs computation
             String expression = rawValue.substring(1);
@@ -56,13 +63,13 @@ public final class Spreadsheet {
                 // Is it an addition of two other terms e.g. "1.3 + A2"?
                 String[] arr = expression.split("\\+");
                 // Calculate value of each component separately.
-                String calcLeft = computeSimpleExpression(arr[0]);
-                String calcRight = computeSimpleExpression(arr[1]);
+                String calcLeft = computeSingleExpr(arr[0]);
+                String calcRight = computeSingleExpr(arr[1]);
                 // Sum the double values of the two results.
                 double combinedResult = Double.parseDouble(calcLeft) + Double.parseDouble(calcRight);
                 return Double.toString(combinedResult);
             } else {
-                return computeSimpleExpression(expression);
+                return computeSingleExpr(expression);
             }
         } else {
             // Does not need computation
@@ -70,7 +77,8 @@ public final class Spreadsheet {
         }
     }
 
-    private String computeSimpleExpression(String expression) {
+    /** Resolves the actual double value of a single token, like "1.5" or "A4". */
+    private String computeSingleExpr(String expression) {
         try {
             // Is it a simple value e.g. "1.3"?
             Double.parseDouble(expression);
@@ -82,6 +90,7 @@ public final class Spreadsheet {
         }
     }
 
+    /** Turns a cell reference like "A50" into an array like ["A", "50"]. */
     private String[] getCoordinatesFromAddress(String address) {
         // Returns a String array of length two. Array[0] is the row number. Array[1] is the Column letter.
         StringBuilder sb = new StringBuilder();
