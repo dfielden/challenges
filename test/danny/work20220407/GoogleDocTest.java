@@ -1,5 +1,6 @@
 package danny.work20220407;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -156,4 +157,46 @@ public class GoogleDocTest {
         assertEquals("aj", googleDoc.render(3));
     }
 
+    @Test
+    public void addBeyondCheckpoint() {
+        GoogleDoc googleDoc = new GoogleDoc();
+        for (int i = 0; i < 500; i++) {
+            assertEquals(i+1, googleDoc.insert(-1, "aa-"));
+            assertEquals(duplicateString("aa-", i+1), googleDoc.render());
+        }
+        for (int i = 1; i < 500; i++) {
+            assertEquals(duplicateString("aa-", i), googleDoc.render(i));
+        }
+    }
+
+    @Test
+    public void deleteBeyondCheckpoint() {
+        GoogleDoc googleDoc = new GoogleDoc();
+        googleDoc.insert(0, duplicateString("aa-", 500));
+
+        for (int i = 0; i < 300; i++) {
+            assertEquals(i+2, googleDoc.delete(0, 3));
+            assertEquals(duplicateString("aa-", 500-i-1), googleDoc.render());
+        }
+        for (int i = 1; i < 300; i++) {
+            assertEquals(duplicateString("aa-", 500-i+1), googleDoc.render(i));
+        }
+    }
+
+    @Test
+    public void specialCharacters() {
+        GoogleDoc doc = new GoogleDoc();
+        int v = doc.insert(0, "ABC,DEF,XYZ");
+        assertEquals("ABC,DEF,XYZ", doc.render());
+        assertEquals("ABC,DEF,XYZ", doc.render(v));
+    }
+
+
+    private static String duplicateString(String s, int factor) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < factor; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
 }
