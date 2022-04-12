@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
-import static java.lang.Integer.parseInt;
-
 public final class GoogleDoc {
     private int version;
     private String currentText = "";
