@@ -26,8 +26,7 @@ public class Card {
 
     @Override
     public String toString() {
-        String rank;
-
+        final String rank;
         switch (this.rank) {
             case ACE:
                 rank = "A";
@@ -45,7 +44,7 @@ public class Card {
                 rank = String.valueOf(getValue());
                 break;
         }
-        return this.suitSymbol + rank;
+        return rank + suitSymbol;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package danny.work20220411;
 
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -28,9 +27,13 @@ public class EightOffInterface {
         inputs:
         while (true) {
             String command = game.reader.readLine();
+			if (command == null) {
+				System.out.println("Bye!");
+				return;
+			}
 
             switch (command) {
-                case "p": {
+                case "d": {
                     System.out.println("Take card from which stack?: ");
                     int stackNum = Integer.parseInt(reader.readLine());
                     System.out.println("Move card to which space?: ");
@@ -42,7 +45,7 @@ public class EightOffInterface {
                     }
                     break;
                 }
-                case "t": {
+                case "u": {
                     System.out.println("Take card from which space?: ");
                     int spaceNum = Integer.parseInt(reader.readLine());
                     System.out.println("Move card to which stack?: ");
@@ -54,7 +57,7 @@ public class EightOffInterface {
                     }
                     break;
                 }
-                case "w":
+                case "s":
                     System.out.println("First space to swap:");
                     int firstPos = Integer.parseInt(reader.readLine());
                     System.out.println("Second space to swap:");
@@ -91,9 +94,9 @@ public class EightOffInterface {
 
     public static String instructions() {
         return "What do you wish to do? Enter command and hit enter:\n    " +
-                "Move card to space: p\n    " +
-                "Move card to stack: t\n    " +
-                "Swap cards between spaces: w\n    " +
+                "Move card UP to stack: u\n    " +
+                "Move card DOWN to space: d\n    " +
+                "Swap cards between spaces: s\n    " +
                 "Quit game: q" +
                 "\n";
     }

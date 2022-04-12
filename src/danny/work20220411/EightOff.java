@@ -1,5 +1,6 @@
 package danny.work20220411;
 
+import com.google.common.collect.Iterables;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
@@ -101,14 +102,42 @@ public class EightOff {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Stacks:\n");
-        for (int i = 0; i < stacks.length; i++) {
-            Deque stack = stacks[i];
-            sb.append("    ").append(i).append(": ");
-            sb.append(stack);
-            sb.append("\n");
-        }
+//        for (int i = 0; i < stacks.length; i++) {
+//            Deque stack = stacks[i];
+//            sb.append("    ").append(i).append(": ");
+//            sb.append(stack);
+//            sb.append("\n");
+//        }
+
+		int maxHeight = 0;
+		for (Deque<Card> stack : stacks) {
+			if (stack.size() > maxHeight) {
+				maxHeight = stack.size();
+			}
+		}
+		for (int i = 0; i < stacks.length; i++) {
+			sb.append(String.format("%4s", i));
+		}
+		sb.append('\n');
+		for (int i = 0; i < stacks.length; i++) {
+			sb.append("____");
+		}
+		sb.append('\n');
+		for (int row=0; row<maxHeight; row++) {
+			for (int i = 0; i < stacks.length; i++) {
+				Deque<Card> stack = stacks[i];
+				if (row >= stack.size()) {
+					sb.append("    ");
+				} else {
+					Card card = Iterables.get(stack, stack.size() - row - 1);  // Print upside down.
+					sb.append(String.format("%4s", card));
+				}
+			}
+			sb.append("\n");
+		}
+
         sb.append("\n");
-        sb.append("Spaces:\n    ");
+        sb.append("Spaces:\n");
         sb.append(spaces());
         sb.append("\n");
         return sb.toString();
@@ -141,12 +170,20 @@ public class EightOff {
 
     private String spaces() {
         StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (int i = 0; i < spaces.length; i++) {
-            sb.append(i);
-            sb.append(": ");
-            sb.append(spaces[i] == null ? "  " : spaces[i] + " ");
-            sb.append(i == spaces.length -1 ? "]" : ", ");
+		for (int i = 0; i < stacks.length; i++) {
+			sb.append(String.format("%4s", i));
+		}
+		sb.append('\n');
+		for (int i = 0; i < stacks.length; i++) {
+			sb.append("____");
+		}
+		sb.append('\n');
+		for (int i = 0; i < spaces.length; i++) {
+			if (spaces[i] == null) {
+				sb.append("    ");
+			} else {
+         	   sb.append(String.format("%4s", spaces[i]));
+			}
         }
         return sb.toString();
     }
