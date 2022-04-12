@@ -10,6 +10,7 @@ public class EightOffTest {
         EightOff eightOff = new EightOff();
         eightOff.initialiseGame();
         assertFalse(eightOff.isWon());
+        System.out.println(eightOff);
     }
 
 }

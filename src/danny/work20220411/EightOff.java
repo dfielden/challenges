@@ -1,6 +1,7 @@
 package danny.work20220411;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -69,6 +70,7 @@ public class EightOff {
         Card topOfStack = stacks[toStackIndex].peek();
         if (isStackAdditionAllowed(topOfStack, toAdd)) {
             stacks[toStackIndex].push(toAdd);
+            spaces[fromSpaceIndex] = null;
         } else {
             throw new IllegalMoveException("Addition of card: " + toAdd + " to stack: " + toStackIndex + " against rules.");
         }
@@ -80,7 +82,6 @@ public class EightOff {
         spaces[index1] = spaces[index2];
         spaces[index2] = c;
     }
-
 
     public boolean isWon() {
         int emptyCount = 0;
@@ -94,6 +95,23 @@ public class EightOff {
             }
         }
         return emptyCount == 4;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Stacks:\n");
+        for (int i = 0; i < stacks.length; i++) {
+            Deque stack = stacks[i];
+            sb.append("    ").append(i).append(": ");
+            sb.append(stack);
+            sb.append("\n");
+        }
+        sb.append("\n");
+        sb.append("Spaces:\n    ");
+        sb.append(spaces());
+        sb.append("\n");
+        return sb.toString();
     }
 
     private boolean isStackAdditionAllowed(Card topOfStack, Card toAdd) {
@@ -119,5 +137,17 @@ public class EightOff {
             value += 1;
         }
         return true;
+    }
+
+    private String spaces() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < spaces.length; i++) {
+            sb.append(i);
+            sb.append(": ");
+            sb.append(spaces[i] == null ? "  " : spaces[i] + " ");
+            sb.append(i == spaces.length -1 ? "]" : ", ");
+        }
+        return sb.toString();
     }
 }

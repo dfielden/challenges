@@ -3,10 +3,12 @@ package danny.work20220411;
 public class Card {
     private final Rank rank;
     private final Suit suit;
+    private final char suitSymbol;
 
     public Card(Rank rank, Suit suit) {
         this.rank = rank;
         this.suit = suit;
+        this.suitSymbol = createSuitSymbol();
     }
 
     public final int getValue() {
@@ -24,7 +26,26 @@ public class Card {
 
     @Override
     public String toString() {
-        return this.rank + ":" + this.suit;
+        String rank;
+
+        switch (this.rank) {
+            case ACE:
+                rank = "A";
+                break;
+            case JACK:
+                rank = "J";
+                break;
+            case QUEEN:
+                rank = "Q";
+                break;
+            case KING:
+                rank = "K";
+                break;
+            default:
+                rank = String.valueOf(getValue());
+                break;
+        }
+        return this.suitSymbol + rank;
     }
 
     @Override
@@ -68,6 +89,26 @@ public class Card {
     }
 
     enum Suit {CLUB, DIAMOND, HEART, SPADE};
+
+    private char createSuitSymbol() {
+        char symbol = 0;
+
+        switch (this.suit) {
+            case CLUB:
+                symbol = '\u2663';
+                break;
+            case DIAMOND:
+                symbol = '\u2666';
+                break;
+            case HEART:
+                symbol = '\u2764';
+                break;
+            case SPADE:
+                symbol = '\u2660';
+                break;
+        }
+        return symbol;
+    }
 
 }
 
