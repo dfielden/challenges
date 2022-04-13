@@ -2,7 +2,6 @@ package danny.work20220411;
 
 import com.google.common.collect.Iterables;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -102,12 +101,6 @@ public class EightOff {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Stacks:\n");
-//        for (int i = 0; i < stacks.length; i++) {
-//            Deque stack = stacks[i];
-//            sb.append("    ").append(i).append(": ");
-//            sb.append(stack);
-//            sb.append("\n");
-//        }
 
 		int maxHeight = 0;
 		for (Deque<Card> stack : stacks) {
