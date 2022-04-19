@@ -11,13 +11,11 @@ public final class Expression {
 
     public static void main(String[] args) {
         Expression e = createExpression("2 * (5 + (foo-1)) - foo");
-        System.out.println(e);
         Map<String, Double> map = new HashMap<>();
         map.put("hi", 2.0);
         map.put("foo", 5.0);
         e.evaluate(map);
-        List<String> list = simpleExpressionToList("5+2*4-1");
-        System.out.println(evaluateSimpleExpression(list));
+
     }
 
     public String getExpression() {
@@ -29,12 +27,15 @@ public final class Expression {
     }
 
     public double evaluate(Map<String, Double> map) {
+        System.out.println("Expression: " + expression);
         String s = removeSpaces(expression);
         s = convertVariables(map, s);
-        System.out.println(s);
-        List<String> bracketedGroups = separateExpressionByBrackets(Collections.singletonList(s));
-        System.out.println(bracketedGroups);
-        return 0.0;
+        System.out.println("Converted variables: " + s);
+        s = evaluateBracketedGroups(s);
+        System.out.println("Brackets evaluated: " + s);
+        s = evaluateSimpleExpression(s);
+        System.out.println("Result: " + s);
+        return Double.parseDouble(s);
     }
 
     @Override
@@ -42,80 +43,44 @@ public final class Expression {
         return this.expression;
     }
 
-    private static List<String> separateExpressionByBrackets(List<String> input) {
-        List<String> output = new ArrayList<>();
-        for (String subExp : input) {
-            for (int j = 0; j < subExp.length(); j++) {
-                char c = subExp.charAt(j);
-                if (c == '(' && j > 0) {
-                    output.add(subExp.substring(0, j));
-                    output.add(subExp.substring(j));
-                    break;
-                }
-                if (j == subExp.length() - 1) {
-                    output.add(subExp);
+    private static String evaluateBracketedGroups(String expression) {
+        //List<String> output = new ArrayList<>();
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+            if (c == '(') {
+                for (int j = i + 1; j < expression.length(); j++) {
+                    char c1 = expression.charAt(j);
+                    // if there is an inner bracketed expression, break and continue outer loop to reach the inner expression
+                    if (c1 == '(') {
+                        break;
+                    }
+                    // we have found the closing bracket of the sub-expression
+                    if (c1 == ')') {
+                        String subExpression = expression.substring(i, j+1);
+                        // remove brackets.
+                        subExpression = removeBrackets(subExpression);
+                        // evaluate simple expression list.
+                        String evaluation = evaluateSimpleExpression(subExpression);
+                        // substitute original bracketed component with the evaluation.
+                        String result = expression.substring(0, i);
+                        result += evaluation;
+                        result += expression.substring(j + 1);
+                        // recursively check the result until no more brackets are found.
+                        return evaluateBracketedGroups(result);
+                    }
                 }
             }
         }
-        if (input.size() == output.size()) {
-            // no splitting has occurred therefore there are no further bracketed groups
-            // remove brackets from each item in output list
-            for (int i = 0; i < output.size(); i++) {
-                String s = output.get(i);
-                output.set(i, removeBrackets(s));
-            }
-            return output;
-        } else {
-            // splitting has occurred therefore need to check if any further bracket groups
-            return separateExpressionByBrackets(output);
-        }
+        // We have reached the end of the expression without finding any brackets so return the expression.
+        return expression;
+
     }
 
-    private static String evaluateSimpleExpression(List<String> list) {
-        // 5 - 2 * 3 - 2 // -3
-        List<String> newList = new ArrayList<>();
-        System.out.println(list);
-
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equals("/")) {
-                double d = divide(Double.parseDouble(list.get(i-1)), Double.parseDouble(list.get(i+1)));
-                newList.addAll(list.subList(0, i-1));
-                newList.add(String.valueOf(d));
-                newList.addAll(list.subList(i+2, list.size()));
-                return evaluateSimpleExpression(newList);
-            }
-        }
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equals("*")) {
-                double d = multiply(Double.parseDouble(list.get(i-1)), Double.parseDouble(list.get(i+1)));
-                newList.addAll(list.subList(0, i-1));
-                newList.add(String.valueOf(d));
-                newList.addAll(list.subList(i+2, list.size()));
-                return evaluateSimpleExpression(newList);
-            }
-        }
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equals("+")) {
-                double d = add(Double.parseDouble(list.get(i-1)), Double.parseDouble(list.get(i+1)));
-                newList.addAll(list.subList(0, i-1));
-                newList.add(String.valueOf(d));
-                newList.addAll(list.subList(i+2, list.size()));
-                return evaluateSimpleExpression(newList);
-            }
-        }
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equals("-")) {
-                double d = subtract(Double.parseDouble(list.get(i-1)), Double.parseDouble(list.get(i+1)));
-                newList.addAll(list.subList(0, i-1));
-                newList.add(String.valueOf(d));
-                newList.addAll(list.subList(i+2, list.size()));
-                return evaluateSimpleExpression(newList);
-            }
-        }
-        return list.get(0);
-    }
-
-    public static List<String> simpleExpressionToList(String s) {
+    /**
+     Takes a simple arithmetic expression, containing no brackets, iterates through the expression adding each number
+     component or arithmetic operator to a List<String> which is returned.
+     */
+    private static List<String> simpleExpressionToList(String s) {
         List<String> list = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
@@ -132,6 +97,73 @@ public final class Expression {
         return list;
     }
 
+    private static String listToSimpleExpression(List<String> list) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : list) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
+    /**
+     Takes a list representation of a simple arithmetic, non-bracketed, expression (e.g. as returned by the method
+     simpleExpressionToList(String s) and returns a String representation of the evaluation.
+     */
+    private static String evaluateSimpleExpression(String input) {
+        System.out.println("Evaluating simple expression: " + input);
+        List<String> inputAsList = simpleExpressionToList(input);
+        List<String> newList = new ArrayList<>();
+        //String evaluatedInput = "";
+        //System.out.println(list);
+
+        for (int i = 0; i < inputAsList.size(); i++) {
+            if (inputAsList.get(i).equals("/")) {
+                double d = divide(Double.parseDouble(inputAsList.get(i-1)), Double.parseDouble(inputAsList.get(i+1)));
+//                evaluatedInput += input.substring(0, i-1);
+//                evaluatedInput += String.valueOf(d);
+//                evaluatedInput += input.substring(i+2, inputAsList.size());
+//                return evaluateSimpleExpression(evaluatedInput);
+                newList.addAll(inputAsList.subList(0, i-1));
+                newList.add(String.valueOf(d));
+                newList.addAll(inputAsList.subList(i+2, inputAsList.size()));
+                return evaluateSimpleExpression(listToSimpleExpression(newList));
+            }
+        }
+        for (int i = 0; i < inputAsList.size(); i++) {
+            if (inputAsList.get(i).equals("*")) {
+                double d = multiply(Double.parseDouble(inputAsList.get(i-1)), Double.parseDouble(inputAsList.get(i+1)));
+                newList.addAll(inputAsList.subList(0, i-1));
+                newList.add(String.valueOf(d));
+                newList.addAll(inputAsList.subList(i+2, inputAsList.size()));
+                return evaluateSimpleExpression(listToSimpleExpression(newList));
+            }
+        }
+        for (int i = 0; i < inputAsList.size(); i++) {
+            if (inputAsList.get(i).equals("+")) {
+                double d = add(Double.parseDouble(inputAsList.get(i-1)), Double.parseDouble(inputAsList.get(i+1)));
+                newList.addAll(inputAsList.subList(0, i-1));
+                newList.add(String.valueOf(d));
+                newList.addAll(inputAsList.subList(i+2, inputAsList.size()));
+                return evaluateSimpleExpression(listToSimpleExpression(newList));
+            }
+        }
+        for (int i = 0; i < inputAsList.size(); i++) {
+            if (inputAsList.get(i).equals("-")) {
+                double d = subtract(Double.parseDouble(inputAsList.get(i-1)), Double.parseDouble(inputAsList.get(i+1)));
+                newList.addAll(inputAsList.subList(0, i-1));
+                newList.add(String.valueOf(d));
+                newList.addAll(inputAsList.subList(i+2, inputAsList.size()));
+                return evaluateSimpleExpression(listToSimpleExpression(newList));
+            }
+        }
+        System.out.println("Evaluation finished - returning: " + input);
+        return input;
+    }
+
+
+    /**
+     Returns true if the supplied char is an arithmetic operator (+, -, *, /), otherwise returns false.
+     */
     private static boolean isOperator(char c) {
         return c == '+' || c == '-' || c == '*' || c == '/';
     }
@@ -144,7 +176,6 @@ public final class Expression {
         }
         return s;
     }
-
 
     private static String removeSpaces(String s) {
         return s.replaceAll("\\s+","");
