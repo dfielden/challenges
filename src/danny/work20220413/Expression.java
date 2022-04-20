@@ -12,7 +12,7 @@ public final class Expression {
 
     public static void main(String[] args) {
 //        Expression e = createExpression("hi * (5 + (foo-1)) - foo");
-        Expression e = createExpression("5--6");
+        Expression e = createExpression("6/-2+ (10--2)");
 
         Map<String, Double> map = new HashMap<>();
         map.put("hi", 2.0);
@@ -94,12 +94,15 @@ public final class Expression {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < s.length(); i++) {
-            if (isArithmeticOperator(s.charAt(i))) {
-                if (i > 0) {
-                    list.add(sb.toString());
-                }
+            if (isArithmeticOperator(s.charAt(i)) && i > 0) {
+                list.add(sb.toString());
                 list.add(String.valueOf(s.charAt(i)));
                 sb.setLength(0);
+                // Check whether multiplying or dividing by a negative number.
+                if (isArithmeticOperator(s.charAt(i+1))) {
+                    sb.append(s.charAt(i+1));
+                    i++;
+                }
             } else {
                 sb.append(s.charAt(i));
             }
@@ -126,16 +129,22 @@ public final class Expression {
      simpleExpressionToList(String s) and returns a String representation of the evaluation.
      */
     private static String evaluateSimpleExpression(String input) {
-
         System.out.println("Evaluating simple expression: " + input);
+        input = maybeRemoveDoubleSumOperator(input);
+        System.out.println("After check for double operator: " + input);
         List<String> inputAsList = simpleExpressionToList(input);
         System.out.println(inputAsList);
         List<String> newList = new ArrayList<>();
 
+        if (inputAsList.size() == 1) {
+            return listToSimpleExpression(inputAsList);
+        }
+
         // iterate over the expression for each operator in BIDMAS order
         for (char c : operatorArr) {
             for (int j = 0; j < inputAsList.size(); j++) {
-                if (inputAsList.get(j).charAt(0) == c) {
+                // Only want to be true for negative operators, NOT negative numbers
+                if (inputAsList.get(j).charAt(0) == c && inputAsList.get(j).length() == 1) {
                     double d = performArithmeticOperation(c, Double.parseDouble(inputAsList.get(j - 1)), Double.parseDouble(inputAsList.get(j + 1)));
                     newList.addAll(inputAsList.subList(0, j - 1));
                     newList.add(String.valueOf(d));
@@ -170,6 +179,32 @@ public final class Expression {
 
     private static String removeBrackets(String s) {
         return s.replaceAll("[()]","");
+    }
+
+    /**
+     Iterates through the passed-in String. If two sum arithmetic operators (+ or -) are found adjacent to each other, they are
+     substituted for a single arithmetic operator (+- to -. -- to +). If no double operator is found, the passed-in
+     String is returned unaltered.
+     */
+    private static String maybeRemoveDoubleSumOperator(String expression) {
+        if (expression.length() < 2) {
+            return expression;
+        }
+        for (int i = 0; i < expression.length() - 2; i++) {
+            char left = expression.charAt(i);
+            char right = expression.charAt(i + 1);
+
+            if (left == '-' && right == '-') {
+                String expressionBuilder = expression.substring(0, i) + "+" + expression.substring(i + 2);
+                // check for any further double arithmetic operators.
+                return maybeRemoveDoubleSumOperator(expressionBuilder);
+            } else if (left == '+' && right == '-') {
+                // check for any further double arithmetic operators.
+                String expressionBuilder = expression.substring(0, i) + "-" + expression.substring(i + 2);
+                return maybeRemoveDoubleSumOperator(expressionBuilder);
+            }
+        }
+        return expression;
     }
 
     private static double performArithmeticOperation(char operator, double a, double b) {
