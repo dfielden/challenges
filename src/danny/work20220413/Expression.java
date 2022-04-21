@@ -12,11 +12,11 @@ public final class Expression {
 
     public static void main(String[] args) {
 //        Expression e = createExpression("hi * (5 + (foo-1)) - foo");
-        Expression e = createExpression("6/-2+ (10--2)");
+        Expression e = createExpression("worm+wormy+worm");
 
         Map<String, Double> map = new HashMap<>();
-        map.put("hi", 2.0);
-        map.put("foo", 5.0);
+        map.put("worm", 2.0);
+        map.put("wormy", 5.0);
         e.evaluate(map);
     }
 
@@ -89,7 +89,7 @@ public final class Expression {
      is returned.
      For example the expression "6*2-32" will be converted to the following String list: ["6", "*", "2", "-", "32"].
      */
-    private static List<String> simpleExpressionToList(String s) {
+    private static List<String> tokenise(String s) {
         List<String> list = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
@@ -132,7 +132,7 @@ public final class Expression {
         System.out.println("Evaluating simple expression: " + input);
         input = maybeRemoveDoubleSumOperator(input);
         System.out.println("After check for double operator: " + input);
-        List<String> inputAsList = simpleExpressionToList(input);
+        List<String> inputAsList = tokenise(input);
         System.out.println(inputAsList);
         List<String> newList = new ArrayList<>();
 
@@ -165,7 +165,12 @@ public final class Expression {
     }
 
     private static String convertVariablesToDouble(Map<String, Double> variables, String s) {
-        for (String key : variables.keySet()) {
+        List<String> keys = new ArrayList<>();
+        keys.addAll(variables.keySet());
+        // Sort keys based on size fo avoid clashes between similar keys e.g. foobar and foo
+        keys.sort((a, b) -> Integer.compare(b.length(), a.length()));
+
+        for (String key : keys) {
             if (s.contains(key)) {
                 s = s.replaceAll(key, String.valueOf(variables.get(key)));
             }
