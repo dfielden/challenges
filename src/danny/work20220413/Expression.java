@@ -11,21 +11,32 @@ public final class Expression {
     }
 
     public static void main(String[] args) {
-//        Expression e = createExpression("hi * (5 + (foo-1)) - foo");
-        Expression e = createExpression("worm+wormy+worm");
+        Expression e = createExpression("hi * (5 + (foo-1)) - foo");
+        //Expression e = createExpression("worm+wormy+worm");
 
-        Map<String, Double> map = new HashMap<>();
-        map.put("worm", 2.0);
-        map.put("wormy", 5.0);
+        Map<String, Double> map = new LinkedHashMap<>();
+        map.put("foo", 2.0);
+        map.put("h", -10000.0);
+        map.put("hi", 5.0);
         e.evaluate(map);
+    }
+
+    public static Expression createExpression(String s) {
+        return new Expression(s);
     }
 
     public String getExpression() {
         return this.expression;
     }
 
-    public static Expression createExpression(String s) {
-        return new Expression(s);
+    public double evaluate() {
+        System.out.println("Expression: " + expression);
+        String s = removeSpaces(expression);
+        s = evaluateBracketedGroups(s);
+        System.out.println("Brackets evaluated: " + s);
+        s = evaluateSimpleExpression(s);
+        System.out.println("Result: " + s);
+        return Double.parseDouble(s);
     }
 
     public double evaluate(Map<String, Double> map) {
@@ -80,7 +91,6 @@ public final class Expression {
         }
         // We have reached the end of the expression without finding any brackets so return the expression.
         return expression;
-
     }
 
     /**
@@ -141,16 +151,33 @@ public final class Expression {
         }
 
         // iterate over the expression for each operator in BIDMAS order
-        for (char c : operatorArr) {
-            for (int j = 0; j < inputAsList.size(); j++) {
-                // Only want to be true for negative operators, NOT negative numbers
-                if (inputAsList.get(j).charAt(0) == c && inputAsList.get(j).length() == 1) {
-                    double d = performArithmeticOperation(c, Double.parseDouble(inputAsList.get(j - 1)), Double.parseDouble(inputAsList.get(j + 1)));
-                    newList.addAll(inputAsList.subList(0, j - 1));
-                    newList.add(String.valueOf(d));
-                    newList.addAll(inputAsList.subList(j + 2, inputAsList.size()));
-                    return evaluateSimpleExpression(listToSimpleExpression(newList));
-                }
+        //for (char c : operatorArr) {
+        for (int j = 0; j < inputAsList.size(); j++) {
+            // Only want to be true for negative operators, NOT negative numbers
+            if (inputAsList.get(j).charAt(0) == '/' && inputAsList.get(j).length() == 1) {
+                double d = performArithmeticOperation('/', Double.parseDouble(inputAsList.get(j - 1)), Double.parseDouble(inputAsList.get(j + 1)));
+                newList.addAll(inputAsList.subList(0, j - 1));
+                newList.add(String.valueOf(d));
+                newList.addAll(inputAsList.subList(j + 2, inputAsList.size()));
+                return evaluateSimpleExpression(listToSimpleExpression(newList));
+            }
+        }
+        for (int j = 0; j < inputAsList.size(); j++) {
+            if (inputAsList.get(j).charAt(0) == '*' && inputAsList.get(j).length() == 1) {
+                double d = performArithmeticOperation('*', Double.parseDouble(inputAsList.get(j - 1)), Double.parseDouble(inputAsList.get(j + 1)));
+                newList.addAll(inputAsList.subList(0, j - 1));
+                newList.add(String.valueOf(d));
+                newList.addAll(inputAsList.subList(j + 2, inputAsList.size()));
+                return evaluateSimpleExpression(listToSimpleExpression(newList));
+            }
+        }
+        for (int j = 0; j < inputAsList.size(); j++) {
+            if ((inputAsList.get(j).charAt(0) == '+' || inputAsList.get(j).charAt(0) == '-') && inputAsList.get(j).length() == 1) {
+                double d = performArithmeticOperation(inputAsList.get(j).charAt(0), Double.parseDouble(inputAsList.get(j - 1)), Double.parseDouble(inputAsList.get(j + 1)));
+                newList.addAll(inputAsList.subList(0, j - 1));
+                newList.add(String.valueOf(d));
+                newList.addAll(inputAsList.subList(j + 2, inputAsList.size()));
+                return evaluateSimpleExpression(listToSimpleExpression(newList));
             }
         }
         return input;
