@@ -1,6 +1,6 @@
 package danny.scratch;
 
-public abstract class A {
+public abstract class A implements AA {
     public A() {
         System.out.println("A");
     }
@@ -10,6 +10,12 @@ public abstract class A {
 
     public int classInt() {
         return 10;
+    }
+
+    public abstract String getString();
+
+    public String interfaceString() {
+        return "hi";
     }
 
     @Override

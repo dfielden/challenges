@@ -1,6 +1,6 @@
 package danny.scratch;
 
-public class B extends A {
+public abstract class B extends A {
 
     public B() {
         System.out.println("B");
@@ -8,6 +8,10 @@ public class B extends A {
 
     public static int staticInt() {
         return 2;
+    }
+
+    public String getString() {
+        return "hi";
     }
 
     @Override

@@ -1,0 +1,6 @@
+daniel,fielden,22
+james,gubby.23
+jimbo,bear,11
+dd
+tally,sheep,6
+worm,worm,3

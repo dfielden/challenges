@@ -1,18 +1,129 @@
 package danny.scratch;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
+import danny.work20220629.Reducible;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Scratch {
 
     public static void main(String[] args) {
-        System.out.println(multiply(4));
-        Queue q = new LinkedList();
-        int[] arr = new int[]{1, 2, 3, 4, 5, 6};
-        System.out.println(Arrays.toString(Arrays.copyOfRange(arr, 0, 2)));
+        List<Person> list = new ArrayList<>();
+        list.add(new Person("Daniel"));
+        list.add(new Person("D"));
+        list.add(new Person("Dan"));
+        list.add(new Person("DanielFielden"));
+        list.add(new Person("Dany"));
 
+        System.out.println(list);
+        Collections.sort(list, comparator);
+        System.out.println(list);
+
+        Collections.sort(list, Comparator.comparing(Person::getName));
+        System.out.println(list);
+        Collections.sort(list, (p1, p2) -> Integer.compare(p1.getName().length(), p2.getName().length()));
+        System.out.println(list);
+
+        int[] arr = new int[]{1, 2, 3, 4, 5, 6, 7, 8};
+        System.out.println(Arrays.toString(Arrays.copyOfRange(arr, 2, 5)));
+
+        try {
+            Files.lines(Paths.get("ppl.txt"))
+                    .map(line -> line.split(","))
+                    .filter(array -> array.length == 3)
+            .map(array -> new Ppl(array[0], array[1], Integer.parseInt(array[2])))
+            .forEach(System.out::println);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // functional interface
+        Integer[] intArr = new Integer[]{1,2,3,4,5,6,7,8};
+
+        // lambda
+        System.out.println(lambdaRed.reduce(intArr));
+
+        // anonymous class
+        System.out.println(reducible.reduce(intArr));
+
+        // class
+        GoodDanny gd = new GoodDanny();
+        System.out.println(gd.reduce(intArr));
+
+        System.err.println("error message");
+    }
+
+    static Comparator<Person> comparator = new Comparator<Person>() {
+        @Override
+        public int compare(Person o1, Person o2) {
+            return Integer.compare(o1.name.length(), o2.name.length());
+        }
+    };
+
+    public static int numUniqueEmails(String[] emails) {
+        Set<String> set = new HashSet<>();
+
+        for (int i = 0; i < emails.length; i++) {
+            String prefix = emails[i].split("@")[0];
+            String postfix = "@" + emails[i].split("@")[1];
+            System.out.println(postfix);
+            String noPlus = prefix.split("\\+")[0];
+            String noDot = noPlus.replace(".", "");
+            System.out.println(noDot+postfix);
+            set.add(noDot + postfix);
+        }
+        return set.size();
+    }
+
+    public static final class Person {
+        private final String name;
+
+        public Person(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    public static final class Ppl {
+        private final String firstname;
+        private final String lastname;
+        private final int age;
+
+        public Ppl(String firstname, String lastname, int age) {
+            this.firstname = firstname;
+            this.lastname = lastname;
+            this.age = age;
+        }
+
+        public String getFirstname() {
+            return this.firstname;
+        }
+
+        public String getLastname() {
+            return this.lastname;
+        }
+
+        public int getAge() {
+            return this.age;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("name: %s %s, age: %d", firstname, lastname, age);
+        }
     }
 
 
@@ -24,115 +135,37 @@ public class Scratch {
         return a + 2;
     }
 
-
-    public Patient lookupPatientById(String id) {
-        return null;
-    }
-
-    public void savePatient(Patient p) {
-        // ...
-    }
-
-    // ID FirstName LastName DoB
-    // ________________________________
-    // 1  Gub       Worm     1986-05-22
-    // 2  Dan       Worm     1986-05-22
-
-
-    public final class Patient {
-        private final String id;
-        private final String dob;
-
-        public Patient(String id, String dob) {
-            this.id = id;
-            this.dob = dob;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getDob() {
-            return dob;
-        }
-
+    public final static class GoodDanny implements Reducible<Integer>, Serializable {
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
+        public Integer reduce(Integer[] arr) {
+            int result = 0;
+            for (int i : arr) {
+                result += i;
             }
-            if (!(o instanceof Patient)) {
-                return false;
-            }
-            Patient p = (Patient) o;
-            return p.id.equals(this.id) && p.dob.equals(this.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return 31 * id.hashCode() + dob.hashCode();
+            return result;
         }
     }
 
-
-    public final class WaitingPatient implements Comparable<WaitingPatient> {
-        private final Patient patient;
-        private final Date time;
-        private final int priority;
-
-        public WaitingPatient(Patient patient, int priority) {
-            this.patient = patient;
-            this.time = new Date();
-            this.priority = priority;
-        }
-
-        public Patient getPatient() {
-            return patient;
-        }
-
-        public Date getTime() {
-            return time;
-        }
-
-        public int getPriority() {
-            return priority;
-        }
-
+    static final Reducible<Integer> reducible = new Reducible<Integer>() {
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
+        public Integer reduce(Integer[] arr) {
+            int result = 0;
+            for (int i : arr) {
+                result += i;
             }
-            if (!(o instanceof WaitingPatient)) {
-                return false;
-            }
-            WaitingPatient p = (WaitingPatient) o;
-            return p.patient.equals(this.patient) && p.time.equals(this.time) && p.priority == this.priority;
+            return result;
         }
+    };
 
-        @Override
-        public int hashCode() {
-            return 31 * patient.hashCode() + time.hashCode() + Integer.hashCode(priority);
+    static final Reducible<Integer> lambdaRed = arr -> {
+        int result = 0;
+        for (int i : arr) {
+            result += i;
         }
+        return result;
+    };
 
 
-        @Override
-        public int compareTo(WaitingPatient p) {
-            int pri = Integer.compare(this.priority, p.priority);
-            if (pri != 0) {
-                return pri;
-            }
 
-            int t = time.compareTo(p.time);
-            if (t != 0) {
-                return t;
-            }
-
-            return 0;  // Equal.
-
-
-        }
-
-    }
 }
 
